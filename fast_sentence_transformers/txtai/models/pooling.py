@@ -28,14 +28,14 @@ class Pooling(nn.Module):
         super().__init__()
 
         self.model = Models.load(path)
-        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer if tokenizer else path)
+        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer or path)
         self.device = Models.device(device)
 
         # Detect unbounded tokenizer typically found in older models
         Models.checklength(self.model, self.tokenizer)
 
         # Set max length
-        self.maxlength = maxlength if maxlength else self.tokenizer.model_max_length
+        self.maxlength = maxlength or self.tokenizer.model_max_length
 
         # Move to device
         self.to(self.device)

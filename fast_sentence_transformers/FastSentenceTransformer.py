@@ -36,95 +36,23 @@ class FastSentenceTransformer(object):
 
         if cache_folder is None:
             cache_folder = os.getenv("SENTENCE_TRANSFORMERS_HOME")
-            if cache_folder is None:
-                try:
-                    from torch.hub import _get_torch_home
+        if cache_folder is None:
+            try:
+                from torch.hub import _get_torch_home
 
-                    torch_cache_home = _get_torch_home()
-                except ImportError:
-                    torch_cache_home = os.path.expanduser(
-                        os.getenv(
-                            "TORCH_HOME",
-                            os.path.join(os.getenv("XDG_CACHE_HOME", "~/.cache"), "torch"),
-                        )
+                torch_cache_home = _get_torch_home()
+            except ImportError:
+                torch_cache_home = os.path.expanduser(
+                    os.getenv(
+                        "TORCH_HOME",
+                        os.path.join(os.getenv("XDG_CACHE_HOME", "~/.cache"), "torch"),
                     )
+                )
 
-                cache_folder = os.path.join(torch_cache_home, "sentence_transformers")
+            cache_folder = os.path.join(torch_cache_home, "sentence_transformers")
 
         if model_name_or_path is not None and model_name_or_path != "":
-            logger.info("Load pretrained SentenceTransformer: {}".format(model_name_or_path))
-
-            # Old models that don't belong to any organization
-            basic_transformer_models = [
-                "albert-base-v1",
-                "albert-base-v2",
-                "albert-large-v1",
-                "albert-large-v2",
-                "albert-xlarge-v1",
-                "albert-xlarge-v2",
-                "albert-xxlarge-v1",
-                "albert-xxlarge-v2",
-                "bert-base-cased-finetuned-mrpc",
-                "bert-base-cased",
-                "bert-base-chinese",
-                "bert-base-german-cased",
-                "bert-base-german-dbmdz-cased",
-                "bert-base-german-dbmdz-uncased",
-                "bert-base-multilingual-cased",
-                "bert-base-multilingual-uncased",
-                "bert-base-uncased",
-                "bert-large-cased-whole-word-masking-finetuned-squad",
-                "bert-large-cased-whole-word-masking",
-                "bert-large-cased",
-                "bert-large-uncased-whole-word-masking-finetuned-squad",
-                "bert-large-uncased-whole-word-masking",
-                "bert-large-uncased",
-                "camembert-base",
-                "ctrl",
-                "distilbert-base-cased-distilled-squad",
-                "distilbert-base-cased",
-                "distilbert-base-german-cased",
-                "distilbert-base-multilingual-cased",
-                "distilbert-base-uncased-distilled-squad",
-                "distilbert-base-uncased-finetuned-sst-2-english",
-                "distilbert-base-uncased",
-                "distilgpt2",
-                "distilroberta-base",
-                "gpt2-large",
-                "gpt2-medium",
-                "gpt2-xl",
-                "gpt2",
-                "openai-gpt",
-                "roberta-base-openai-detector",
-                "roberta-base",
-                "roberta-large-mnli",
-                "roberta-large-openai-detector",
-                "roberta-large",
-                "t5-11b",
-                "t5-3b",
-                "t5-base",
-                "t5-large",
-                "t5-small",
-                "transfo-xl-wt103",
-                "xlm-clm-ende-1024",
-                "xlm-clm-enfr-1024",
-                "xlm-mlm-100-1280",
-                "xlm-mlm-17-1280",
-                "xlm-mlm-en-2048",
-                "xlm-mlm-ende-1024",
-                "xlm-mlm-enfr-1024",
-                "xlm-mlm-enro-1024",
-                "xlm-mlm-tlm-xnli15-1024",
-                "xlm-mlm-xnli15-1024",
-                "xlm-roberta-base",
-                "xlm-roberta-large-finetuned-conll02-dutch",
-                "xlm-roberta-large-finetuned-conll02-spanish",
-                "xlm-roberta-large-finetuned-conll03-english",
-                "xlm-roberta-large-finetuned-conll03-german",
-                "xlm-roberta-large",
-                "xlnet-base-cased",
-                "xlnet-large-cased",
-            ]
+            logger.info(f"Load pretrained SentenceTransformer: {model_name_or_path}")
 
             if os.path.exists(model_name_or_path):
                 # Load from path
@@ -132,11 +60,83 @@ class FastSentenceTransformer(object):
             else:
                 # Not a path, load from hub
                 if "\\" in model_name_or_path or model_name_or_path.count("/") > 1:
-                    raise ValueError("Path {} not found".format(model_name_or_path))
+                    raise ValueError(f"Path {model_name_or_path} not found")
+
+                # Old models that don't belong to any organization
+                basic_transformer_models = [
+                    "albert-base-v1",
+                    "albert-base-v2",
+                    "albert-large-v1",
+                    "albert-large-v2",
+                    "albert-xlarge-v1",
+                    "albert-xlarge-v2",
+                    "albert-xxlarge-v1",
+                    "albert-xxlarge-v2",
+                    "bert-base-cased-finetuned-mrpc",
+                    "bert-base-cased",
+                    "bert-base-chinese",
+                    "bert-base-german-cased",
+                    "bert-base-german-dbmdz-cased",
+                    "bert-base-german-dbmdz-uncased",
+                    "bert-base-multilingual-cased",
+                    "bert-base-multilingual-uncased",
+                    "bert-base-uncased",
+                    "bert-large-cased-whole-word-masking-finetuned-squad",
+                    "bert-large-cased-whole-word-masking",
+                    "bert-large-cased",
+                    "bert-large-uncased-whole-word-masking-finetuned-squad",
+                    "bert-large-uncased-whole-word-masking",
+                    "bert-large-uncased",
+                    "camembert-base",
+                    "ctrl",
+                    "distilbert-base-cased-distilled-squad",
+                    "distilbert-base-cased",
+                    "distilbert-base-german-cased",
+                    "distilbert-base-multilingual-cased",
+                    "distilbert-base-uncased-distilled-squad",
+                    "distilbert-base-uncased-finetuned-sst-2-english",
+                    "distilbert-base-uncased",
+                    "distilgpt2",
+                    "distilroberta-base",
+                    "gpt2-large",
+                    "gpt2-medium",
+                    "gpt2-xl",
+                    "gpt2",
+                    "openai-gpt",
+                    "roberta-base-openai-detector",
+                    "roberta-base",
+                    "roberta-large-mnli",
+                    "roberta-large-openai-detector",
+                    "roberta-large",
+                    "t5-11b",
+                    "t5-3b",
+                    "t5-base",
+                    "t5-large",
+                    "t5-small",
+                    "transfo-xl-wt103",
+                    "xlm-clm-ende-1024",
+                    "xlm-clm-enfr-1024",
+                    "xlm-mlm-100-1280",
+                    "xlm-mlm-17-1280",
+                    "xlm-mlm-en-2048",
+                    "xlm-mlm-ende-1024",
+                    "xlm-mlm-enfr-1024",
+                    "xlm-mlm-enro-1024",
+                    "xlm-mlm-tlm-xnli15-1024",
+                    "xlm-mlm-xnli15-1024",
+                    "xlm-roberta-base",
+                    "xlm-roberta-large-finetuned-conll02-dutch",
+                    "xlm-roberta-large-finetuned-conll02-spanish",
+                    "xlm-roberta-large-finetuned-conll03-english",
+                    "xlm-roberta-large-finetuned-conll03-german",
+                    "xlm-roberta-large",
+                    "xlnet-base-cased",
+                    "xlnet-large-cased",
+                ]
 
                 if "/" not in model_name_or_path and model_name_or_path.lower() not in basic_transformer_models:
                     # A model from sentence-transformers
-                    model_name_or_path = __MODEL_HUB_ORGANIZATION__ + "/" + model_name_or_path
+                    model_name_or_path = f"{__MODEL_HUB_ORGANIZATION__}/{model_name_or_path}"
 
                 model_path = os.path.join(cache_folder, model_name_or_path.replace("/", "_"))
 
@@ -155,25 +155,23 @@ class FastSentenceTransformer(object):
 
         if device == "cpu":
             fast_onnxprovider = "CPUExecutionProvider"
-        else:
-            if "CUDAExecutionProvider" not in onnxproviders:
-                logger.warning("Using CPU. Try installing 'onnxruntime-gpu'.")
-                fast_onnxprovider = "CPUExecutionProvider"
-            else:
-                fast_onnxprovider = "CUDAExecutionProvider"
+        elif "CUDAExecutionProvider" in onnxproviders:
+            fast_onnxprovider = "CUDAExecutionProvider"
 
+        else:
+            logger.warning("Using CPU. Try installing 'onnxruntime-gpu'.")
+            fast_onnxprovider = "CPUExecutionProvider"
         self.model_path = model_path
         self.fast_onnxprovider = fast_onnxprovider
         self.cache_folder = cache_folder
         self.enable_overwrite = enable_overwrite
 
-        if os.path.exists(os.path.join(self.model_path, "modules.json")):  # Load as SentenceTransformer model
-            self._load_sbert_model(model_path)
-            self.sbertmodel2onnx()
-            self.session = self._load_sbert_session()
-            self.pooling_model = self._load_sbert_pooling()
-        else:
+        if not os.path.exists(os.path.join(self.model_path, "modules.json")):
             raise ValueError("AutoModels are not Implemented!")
+        self._load_sbert_model(model_path)
+        self.sbertmodel2onnx()
+        self.session = self._load_sbert_session()
+        self.pooling_model = self._load_sbert_pooling()
 
     def _load_sbert_model(self, model_path):
         """
@@ -221,7 +219,7 @@ class FastSentenceTransformer(object):
         elif len(text) == 0 or isinstance(text[0], int):  # Empty string or list of ints
             return len(text)
         else:
-            return sum([len(t) for t in text])  # Sum of length of individual strings
+            return sum(len(t) for t in text)
 
     def encode(
         self,
@@ -256,9 +254,7 @@ class FastSentenceTransformer(object):
         """
 
         if show_progress_bar is None:
-            show_progress_bar = (
-                logger.getEffectiveLevel() == logging.INFO or logger.getEffectiveLevel() == logging.DEBUG
-            )
+            show_progress_bar = logger.getEffectiveLevel() in [logging.INFO, logging.DEBUG]
 
         if convert_to_tensor:
             convert_to_numpy = False
@@ -299,7 +295,7 @@ class FastSentenceTransformer(object):
         if convert_to_tensor:
             all_embeddings = torch.stack(all_embeddings)
         elif convert_to_numpy:
-            all_embeddings = np.asarray([emb for emb in all_embeddings])
+            all_embeddings = np.asarray(list(all_embeddings))
 
         if input_was_string:
             all_embeddings = all_embeddings[0]
@@ -328,8 +324,7 @@ class FastSentenceTransformer(object):
                 "attention_mask": inputs.get("attention_mask"),
             }
         )
-        result = ort_result.get("sentence_embedding")
-        return result
+        return ort_result.get("sentence_embedding")
 
     def _load_sbert_pooling(self):
         """
@@ -341,8 +336,7 @@ class FastSentenceTransformer(object):
             modules_config = json.load(fIn)
 
         pooling_model_path = os.path.join(self.model_path, modules_config[1].get("path"))
-        pooling_model = Pooling.load(pooling_model_path)
-        return pooling_model
+        return Pooling.load(pooling_model_path)
 
     def _load_sbert_session(self):
         """
@@ -355,7 +349,8 @@ class FastSentenceTransformer(object):
 
         sess_options.intra_op_num_threads = psutil.cpu_count(logical=True)
 
-        session = onnxruntime.InferenceSession(
-            self.export_model_name, sess_options, providers=[self.fast_onnxprovider]
+        return onnxruntime.InferenceSession(
+            self.export_model_name,
+            sess_options,
+            providers=[self.fast_onnxprovider],
         )
-        return session

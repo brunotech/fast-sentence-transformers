@@ -85,7 +85,7 @@ class HFOnnx(Tensors):
         dummy = dict(tokenizer(["test inputs"], return_tensors="pt"))
 
         # Default to BytesIO if no output file provided
-        output = output if output else BytesIO()
+        output = output or BytesIO()
 
         # Export model to ONNX
         export(
@@ -99,12 +99,12 @@ class HFOnnx(Tensors):
             dynamic_axes=dict(chain(inputs.items(), outputs.items())),
         )
 
-        # Quantize model
         if quantize:
-            if not ONNX_RUNTIME:
-                raise ImportError('onnxruntime is not available - install "pipeline" extra to enable')
+            if ONNX_RUNTIME:
+                output = self.quantization(output)
 
-            output = self.quantization(output)
+            else:
+                raise ImportError('onnxruntime is not available - install "pipeline" extra to enable')
 
         if isinstance(output, BytesIO):
             # Reset stream and return bytes
